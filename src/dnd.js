@@ -32,6 +32,7 @@ function createDiv() {
     newDiv.classList.add('draggable-div');
     newDiv.style.height = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.width = Math.round(Math.random() * 100 + 50) + 'px';
+    newDiv.style.position = 'absolute';
     newDiv.style.left = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.top= Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.backgroundColor = '#'+((1<<24)*Math.random()|0).toString(16);
