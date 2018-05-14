@@ -34,7 +34,7 @@ function createDiv() {
     newDiv.style.width = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.left = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.top= Math.round(Math.random() * 100 + 50) + 'px';
-    newDiv.style.backgroundColor = "#"+((1<<24)*Math.random()|0).toString(16);
+    newDiv.style.backgroundColor = '#'+((1<<24)*Math.random()|0).toString(16);
 
     return newDiv;
 }
@@ -48,6 +48,42 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+
+    let getCoords = elem => {
+        let box = elem.getBoundingClientRect();
+
+        return {
+            top: box.top + pageYOffset,
+            left: box.left + pageXOffset
+        };
+
+    };
+    
+    document.addEventListener('mousedown', e => {
+        if (e.target !== target) {
+            return;
+        }
+
+        let coords = getCoords(target);
+        let shiftX = e.pageX - coords.left;
+        let shiftY = e.pageY - coords.top;
+        
+        let moveAt = (e) => {
+            target.style.left = e.pageX - shiftX + 'px';
+            target.style.top = e.pageY - shiftY + 'px';
+        };        
+        
+        let dragEnd = () => {
+            document.removeEventListener('mousemove', moveAt);
+            document.removeEventListener('mouseup', dragEnd);
+        };
+
+        target.style.position = 'absolute';
+        target.style.zIndex = 1000;
+        
+        document.addEventListener('mousemove', moveAt);
+        document.addEventListener('mouseup', dragEnd);
+    });
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
