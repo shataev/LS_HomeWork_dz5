@@ -16,7 +16,6 @@
    homeworkContainer.appendChild(newDiv);
  */
 const homeworkContainer = document.querySelector('#homework-container');
-homeworkContainer.style.height = 600 + 'px';
 
 /*
  Функция должна создавать и возвращать новый div с классом draggable-div и случайными размерами/цветом/позицией
@@ -31,7 +30,6 @@ function createDiv() {
     const newDiv = document.createElement('div');
 
     newDiv.classList.add('draggable-div');
-    newDiv.setAttribute('draggable', 'true');
     newDiv.style.height = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.width = Math.round(Math.random() * 100 + 50) + 'px';
     newDiv.style.position = 'absolute';
@@ -61,25 +59,32 @@ function addListeners(target) {
         };
 
     };
-
-    target.addEventListener('dragstart', function(e) {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('Text', this.outerHTML);
-    });
-
-    homeworkContainer.addEventListener('drop', (e) => {
-        target.style.left = e.clientX + 'px';
-        target.style.top = e.clientY + 'px';
-    });
-
-    homeworkContainer.addEventListener('dragover', (e) => {
-        if (e.preventDefault) {
-            e.preventDefault();
+    
+    document.addEventListener('mousedown', e => {
+        if (e.target !== target) {
+            return;
         }
 
-        e.dataTransfer.dropEffect = 'move';
+        let coords = getCoords(target);
+        let shiftX = e.pageX - coords.left;
+        let shiftY = e.pageY - coords.top;
+        
+        let moveAt = (e) => {
+            target.style.left = e.pageX - shiftX + 'px';
+            target.style.top = e.pageY - shiftY + 'px';
+        };        
+        
+        let dragEnd = () => {
+            document.removeEventListener('mousemove', moveAt);
+            document.removeEventListener('mouseup', dragEnd);
+        };
 
-    })
+        target.style.position = 'absolute';
+        target.style.zIndex = 1000;
+        
+        document.addEventListener('mousemove', moveAt);
+        document.addEventListener('mouseup', dragEnd);
+    });
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
